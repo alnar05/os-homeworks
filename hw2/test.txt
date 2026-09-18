@@ -1,0 +1,5 @@
+hello from Narek
+os section A
+homework 2
+main
+main function

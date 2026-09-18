@@ -1,0 +1,217 @@
+===================================================
+Assignment 0
+===================================================
+
+Source code: 
+"""
+#include <stdio.h> 
+#include <sys/types.h> 
+#include <unistd.h> 
+
+int main() 
+{ 
+        fork();
+ 
+        fork();
+ 
+        fork();
+ 
+	    printf("Process PID: %d | Parent PID: %d\n", getpid(), getppid());
+		
+
+        while (1);
+        return 0; 
+} 
+"""
+
+Output example: 
+"""
+Process PID: 10797 | Parent PID: 3107
+Process PID: 10799 | Parent PID: 10797
+Process PID: 10798 | Parent PID: 10797
+Process PID: 10800 | Parent PID: 10797
+Process PID: 10801 | Parent PID: 10798
+Process PID: 10803 | Parent PID: 10798
+Process PID: 10802 | Parent PID: 10799
+Process PID: 10804 | Parent PID: 10801
+"""
+
+In this program fork() is called 3 times sequantially.
+fork() return values
+1. 0 if it is inside the child process
+2. any positive value (> 0) if it is inside the parent process
+3. -1 if it encounters an error during process creation
+Because every process runs through the fork() the number of processes doubles at every step and reaches 8
+
+Original Parent: 10797
+Fork 1 Children:
+    10798 (Parent: 10797)
+Fork 2 Children:
+    10799 (Parent: 10797)
+    10801 (Parent: 10798)
+Fork 3 Children:
+    10800 (Parent: 10797)
+    10802 (Parent: 10799)
+    10803 (Parent: 10798)
+    10804 (Parent: 10801)
+
+
+===================================================
+Assignment 1
+===================================================
+
+Source code:
+"""
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main() {
+    int pid = fork();
+
+    if (pid == 0) {
+        execl("/usr/bin/ls", "ls", NULL);
+    } 
+
+    else {
+        wait(NULL);
+        printf("Parent process done\n");
+    }
+
+    return 0;
+}
+"""
+
+Output example:
+"""
+ex0  ex0.c  ex1  ex1.c  ex2.c  ex3.c  ex4.c  report.txt
+Parent process done
+"""
+
+The program calls fork(), 
+the child process executes "ls" command,
+the parent process prints "Parent process done" after the child is done
+
+
+===================================================
+Assignment 2
+===================================================
+
+Source code:
+"""
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main() {
+    int pid = fork();
+
+    if (pid == 0) {
+        execl("/usr/bin/ls", "ls", NULL);
+    } 
+    
+    else {
+        int ppid = fork();
+
+        if (ppid == 0) {
+            execl("/usr/bin/date", "date", NULL);
+        }
+        else {
+            wait(NULL);
+            wait(NULL);
+            printf("Parent process done\n");
+        }
+    }
+
+    return 0;
+}
+"""
+
+Output example:
+"""
+Fri Sep 18 08:51:35 PM +04 2026
+ex0  ex0.c  ex1  ex1.c  ex2  ex2.c  ex3.c  ex4.c  report.txt
+Parent process done
+"""
+
+The parent calls the first fork() to create child 1
+child 1 executes "ls" command
+the parent calls the second fork() to create child 2
+child 2 executes "date" command
+the parent prints "Parent process done" after all the children are done
+
+
+===================================================
+Assignment 3
+===================================================
+
+Source code:
+"""
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main() {
+    int pid = fork();
+
+    if (pid == 0) {
+        execl("/usr/bin/echo", "echo", "Hello from the child process");
+    } 
+    else {
+        wait(NULL);
+        printf("Parent process done\n");
+    }
+
+    return 0;
+}
+"""
+
+Output example:
+"""
+Hello from the child process
+Parent process done
+"""
+
+The program calls fork(), 
+the child process executes "echo" command with "Hello from the child process" argument,
+the parent process prints "Parent process done" after the child is done
+
+
+===================================================
+Assignment 4
+===================================================
+
+Source code:
+"""
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main() {
+    int pid = fork();
+
+    if (pid == 0) {
+        execl("/usr/bin/grep", "grep", "-n", "main", "test.txt", NULL);
+    } 
+    else {
+        wait(NULL);
+        printf("Parent process done\n");
+    }
+
+    return 0;
+}
+"""
+
+Output example:
+"""
+4:main
+5:main function
+Parent process done
+"""
+
+The program calls fork(), 
+the child process executes "grep" command  (grep -n main test.txt)
+the parent process prints "Parent process done" after the child is done
+
+
+!!! DONE !!!
